@@ -1,0 +1,138 @@
+Here is a **detailed prompt** you can copy and paste into any **AI code generator tool** (such as GitHub Copilot, OpenAI's Code Interpreter, or AutoGen tools) to get the complete code for your **Django-based Price Tracking Website**:  
+
+---
+
+### **📌 Prompt: Django Price Tracker Website**  
+
+#### **🎯 Project Overview:**  
+I want to build a **Django-based price tracking website** where users can:  
+- **Register and log in** using Django authentication  
+- **Enter a product URL** (Amazon/Flipkart) and **set a target price**  
+- **Monitor product prices** and store history in a **SQLite database**  
+- **Receive email alerts** when the price drops below the target  
+- **View Top Categories and Top Offers** in the navigation bar  
+
+---
+
+### **🛠 Tech Stack & Requirements:**  
+- **Frontend:** HTML, CSS, Bootstrap  
+- **Backend:** Django, Django ORM  
+- **Database:** SQLite  
+- **Web Scraping:** BeautifulSoup (for price fetching)  
+- **Email Alerts:** Django Email (SMTP)  
+- **User Authentication:** Django built-in auth (register/login/logout)  
+- **Deployment:** Localhost using Django’s development server  
+
+---
+
+## **🔹 Features & Code Requirements**  
+
+### **1️⃣ User Authentication System**  
+✅ Use Django's built-in **authentication system**  
+✅ Users should be able to **register, log in, and log out**  
+✅ Store **user info** in the database  
+
+---
+
+### **2️⃣ Product Tracking System**  
+✅ Users **input a product link** and set a **target price**  
+✅ The system **scrapes the latest price** from Amazon/Flipkart  
+✅ Store product details in **SQLite database using Django ORM**  
+✅ Run **a scheduled price check** (Celery or cron job)  
+✅ **Send email notifications** if the price drops below the target  
+
+---
+
+### **3️⃣ Email Notifications**  
+✅ Use **Django's email system** with SMTP  
+✅ **Trigger an email** when the product price drops  
+✅ Email should contain the **product link & new price**  
+
+---
+
+### **4️⃣ Navigation Bar & Pages**  
+✅ **Home Page:** Product tracking form + explanation  
+✅ **Top Categories Page:** Show trending product categories  
+✅ **Top Offers Page:** Show current e-commerce deals  
+
+---
+
+## **🔹 Database Schema (Django ORM Models)**  
+```python
+from django.db import models
+from django.contrib.auth.models import User
+
+class TrackedProduct(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product_url = models.URLField()
+    target_price = models.FloatField()
+    current_price = models.FloatField()
+    last_checked = models.DateTimeField(auto_now=True)
+```
+
+---
+
+## **🔹 Web Scraping for Price Fetching**  
+```python
+import requests
+from bs4 import BeautifulSoup
+
+def get_product_price(url):
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    price = soup.find("span", {"class": "a-price-whole"}).text
+    return float(price.replace(",", ""))
+```
+
+---
+
+## **🔹 Email Notification for Price Drops**  
+```python
+from django.core.mail import send_mail
+
+def send_price_alert(user_email, product_url, new_price):
+    subject = "Price Drop Alert!"
+    message = f"The price of the product has dropped to {new_price}. Check it out: {product_url}"
+    send_mail(subject, message, 'your-email@example.com', [user_email])
+```
+
+---
+
+## **🔹 Backend API Endpoints (Django Views & URLs)**  
+| **Endpoint** | **Method** | **Description** |
+|-------------|------------|----------------|
+| `/register/` | **POST** | User Registration |
+| `/login/` | **POST** | User Login |
+| `/dashboard/` | **GET** | View tracked products |
+| `/track-product/` | **POST** | Add product for tracking |
+| `/untrack-product/` | **DELETE** | Remove a tracked product |
+
+---
+
+## **🔹 Deployment Instructions**  
+1️⃣ **Generate a Django project** using `django-admin startproject price_tracker`  
+2️⃣ **Implement user authentication** (register/login/logout)  
+3️⃣ **Set up Django ORM models** for storing product details  
+4️⃣ **Write the web scraping logic** using BeautifulSoup  
+5️⃣ **Create email notifications** when price drops  
+6️⃣ **Build the frontend UI** using Bootstrap  
+7️⃣ **Deploy using Django’s built-in development server**  
+
+---
+
+### **📌 Output Expectations from AI Code Generator**
+- **Django project setup**
+- **User authentication system**
+- **Database models for product tracking**
+- **Web scraping functions**
+- **Email alert system**
+- **Navigation bar with Home, Top Categories, and Top Offers**
+- **API endpoints for tracking/untracking products**
+- **Deployment instructions for localhost**
+
+---
+
+This **detailed prompt** will help **AI code generators** create a fully functional Django-based **Price Tracking Website**! 🚀  
+
+Let me know if you need any modifications! 😊
