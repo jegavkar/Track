@@ -1,0 +1,236 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}{{ product.product_name }} Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    .price-change-up {
+        color: #dc3545;
+    }
+    .price-change-down {
+        color: #28a745;
+    }
+    .product-image {
+        max-height: 200px;
+        object-fit: contain;
+    }
+    .price-badge {
+        font-size: 1.2rem;
+    }
+    .price-history-table {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+
+<div class="row">
+    <!-- Product Details Card -->
+    <div class="col-md-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Product Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    {% if product.product_image %}
+                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-fluid product-image mb-3">
+                    {% else %}
+                    <div class="product-placeholder mb-3 mx-auto" style="width: 150px; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-shopping-bag fa-4x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <h3 class="mb-1">{{ product.product_name }}</h3>
+                    <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">
+                        <i class="fas fa-external-link-alt me-1"></i>View on store
+                    </a>
+                </div>
+
+                <div class="row g-0 text-center mb-3">
+                    <div class="col-6 border p-3">
+                        <div class="fw-bold text-muted">Current Price</div>
+                        <div class="price-badge">${{ product.current_price|floatformat:2 }}</div>
+                    </div>
+                    <div class="col-6 border p-3">
+                        <div class="fw-bold text-muted">Target Price</div>
+                        <div class="price-badge">${{ product.target_price|floatformat:2 }}</div>
+                    </div>
+                </div>
+                
+                <div class="row g-0 text-center mb-3">
+                    <div class="col-6 border p-3">
+                        <div class="fw-bold text-muted">Original Price</div>
+                        <div class="price-badge">${{ product.original_price|floatformat:2 }}</div>
+                    </div>
+                    <div class="col-6 border p-3">
+                        <div class="fw-bold text-muted">Price Change</div>
+                        <div class="price-badge">
+                            {% if product.price_difference > 0 %}
+                            <span class="price-change-down">
+                                <i class="fas fa-arrow-down me-1"></i>{{ product.price_difference_percentage|floatformat:1 }}%
+                            </span>
+                            {% elif product.price_difference < 0 %}
+                            <span class="price-change-up">
+                                <i class="fas fa-arrow-up me-1"></i>{{ product.price_difference_percentage|abs|floatformat:1 }}%
+                            </span>
+                            {% else %}
+                            <span class="text-muted">No change</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <div>
+                        <div class="text-muted">Date Added</div>
+                        <div>{{ product.date_added|date:"M d, Y" }}</div>
+                    </div>
+                    <div>
+                        <div class="text-muted">Last Updated</div>
+                        <div>{{ product.last_checked|date:"M d, Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'check-price' product.id %}" class="btn btn-primary">
+                        <i class="fas fa-sync-alt me-1"></i>Update Price
+                    </a>
+                    <a href="{% url 'untrack-product' product.id %}" class="btn btn-danger" 
+                       onclick="return confirm('Are you sure you want to remove this product?')">
+                        <i class="fas fa-trash-alt me-1"></i>Stop Tracking
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price History Card -->
+    <div class="col-md-7 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-chart-line me-2"></i>Price History</h4>
+            </div>
+            <div class="card-body">
+                {% if price_history %}
+                    <div class="mb-4">
+                        <canvas id="priceHistoryChart"></canvas>
+                    </div>
+                    <div class="price-history-table">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Price</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for history in price_history %}
+                                <tr>
+                                    <td>{{ history.date_checked|date:"M d, Y H:i" }}</td>
+                                    <td>${{ history.price|floatformat:2 }}</td>
+                                    <td>
+                                        {% if forloop.counter < price_history.count %}
+                                            {% with prev_price=price_history|slice:"{{ forloop.counter }}"|first %}
+                                                {% if history.price < prev_price.price %}
+                                                <span class="price-change-down">
+                                                    <i class="fas fa-arrow-down me-1"></i>${{ prev_price.price|sub:history.price|floatformat:2 }}
+                                                </span>
+                                                {% elif history.price > prev_price.price %}
+                                                <span class="price-change-up">
+                                                    <i class="fas fa-arrow-up me-1"></i>${{ history.price|sub:prev_price.price|floatformat:2 }}
+                                                </span>
+                                                {% else %}
+                                                <span class="text-muted">No change</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-chart-line fa-4x mb-3 text-muted"></i>
+                        <h4>No price history available</h4>
+                        <p class="text-muted">Price history will appear here after the first price update.</p>
+                        <a href="{% url 'check-price' product.id %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-sync-alt me-1"></i>Update Price Now
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if price_history %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the price history data
+        const dates = [
+            {% for history in price_history %}
+                "{{ history.date_checked|date:'M d, Y' }}",
+            {% endfor %}
+        ];
+        const prices = [
+            {% for history in price_history %}
+                {{ history.price }},
+            {% endfor %}
+        ];
+        
+        // Configure the chart
+        const ctx = document.getElementById('priceHistoryChart').getContext('2d');
+        const priceHistoryChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates.reverse(),
+                datasets: [{
+                    label: 'Price ($)',
+                    data: prices.reverse(),
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
