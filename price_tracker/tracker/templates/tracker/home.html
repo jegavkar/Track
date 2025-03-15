@@ -15,7 +15,7 @@
                         <i class="fas fa-search text-primary fa-2x me-3"></i>
                         <div>
                             <h5 class="mb-1">Track Any Product</h5>
-                            <p class="text-muted">Enter any Amazon or Flipkart product URL to start tracking</p>
+                            <p class="text-muted">Enter product URL from Amazon, Flipkart, Best Buy, or any other store</p>
                         </div>
                     </div>
                     
@@ -65,7 +65,7 @@
                     <div class="mb-3">
                         <label for="{{ form.product_url.id_for_label }}" class="form-label">Product URL</label>
                         {{ form.product_url }}
-                        <div class="form-text text-muted">Enter the full URL of an Amazon or Flipkart product</div>
+                        <div class="form-text text-muted">Enter the full URL from Amazon, Flipkart, Best Buy, or other online stores</div>
                         {% if form.product_url.errors %}
                         <div class="text-danger">{{ form.product_url.errors }}</div>
                         {% endif %}
@@ -104,7 +104,7 @@
                         <div class="step-number bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3">1</div>
                         <div>
                             <h5 class="mb-1">Enter a product URL</h5>
-                            <p class="text-muted">Copy the URL from Amazon or Flipkart</p>
+                            <p class="text-muted">Copy the URL from any supported online store</p>
                         </div>
                     </div>
                     <div class="step d-flex mb-3">
@@ -142,7 +142,7 @@
                             <i class="fas fa-link text-primary fa-4x"></i>
                         </div>
                         <h4>1. Enter a product URL</h4>
-                        <p class="text-muted">Copy and paste the URL of the product you want to track from Amazon or Flipkart</p>
+                        <p class="text-muted">Copy and paste the URL of the product you want to track from any supported online store</p>
                     </div>
                 </div>
             </div>

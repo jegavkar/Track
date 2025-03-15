@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import logging
 from urllib.parse import urlparse
+import trafilatura
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -33,8 +34,11 @@ def get_product_price(url):
             return scrape_amazon(soup, url)
         elif 'flipkart' in domain:
             return scrape_flipkart(soup, url)
+        elif 'bestbuy' in domain:
+            return scrape_bestbuy(soup, url)
         else:
-            raise ValueError(f"Unsupported website: {domain}")
+            # For unsupported websites, try a generic approach with trafilatura
+            return scrape_generic(url)
             
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching {url}: {e}")
@@ -107,4 +111,68 @@ def scrape_flipkart(soup, url):
         
     except Exception as e:
         logger.error(f"Error parsing Flipkart product: {e}")
+        return "Unknown Product", None, None
+
+def scrape_bestbuy(soup, url):
+    """Extract product details from Best Buy"""
+    try:
+        # Try to get product name
+        product_name = soup.select_one('.heading-5')
+        if not product_name:
+            product_name = soup.select_one('.sku-title h1')
+        product_name = product_name.get_text().strip() if product_name else "Unknown Product"
+        
+        # Try to get product price
+        price_element = soup.select_one('.priceView-customer-price span')
+        if not price_element:
+            price_element = soup.select_one('.priceView-binding-price')
+        price = clean_price(price_element.get_text()) if price_element else None
+        
+        # Try to get product image
+        img_element = soup.select_one('.primary-image')
+        if not img_element:
+            img_element = soup.select_one('.picture-wrapper img')
+        img_url = img_element.get('src') if img_element else None
+        
+        return product_name, price, img_url
+        
+    except Exception as e:
+        logger.error(f"Error parsing Best Buy product: {e}")
+        return "Unknown Product", None, None
+
+def scrape_generic(url):
+    """Extract product details using trafilatura for unsupported websites"""
+    try:
+        logger.info(f"Using generic scraper for {url}")
+        
+        # Download the content
+        downloaded = trafilatura.fetch_url(url)
+        
+        # Extract the main text content
+        text_content = trafilatura.extract(downloaded)
+        
+        if not text_content:
+            return "Unknown Product", None, None
+        
+        # Extract metadata
+        metadata = trafilatura.extract_metadata(downloaded)
+        
+        # Use metadata for product name if available
+        product_name = "Unknown Product"
+        if metadata and metadata.title:
+            product_name = metadata.title
+        
+        # For price, we can't reliably extract it from generic pages
+        # We'll return None and let the user manually update it
+        price = None
+        
+        # Try to get an image from metadata
+        img_url = None
+        if metadata and hasattr(metadata, 'image'):
+            img_url = metadata.image
+            
+        return product_name, price, img_url
+        
+    except Exception as e:
+        logger.error(f"Error parsing website with generic method: {e}")
         return "Unknown Product", None, None
