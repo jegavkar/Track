@@ -140,7 +140,7 @@
                                     <td>${{ history.price|floatformat:2 }}</td>
                                     <td>
                                         {% if forloop.counter < price_history.count %}
-                                            {% with prev_price=price_history|slice:"{{ forloop.counter }}"|first %}
+                                            {% with prev_price=price_history|slice:forloop.counter|first %}
                                                 {% if history.price < prev_price.price %}
                                                 <span class="price-change-down">
                                                     <i class="fas fa-arrow-down me-1"></i>${{ prev_price.price|sub:history.price|floatformat:2 }}

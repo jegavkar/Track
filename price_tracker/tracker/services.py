@@ -87,7 +87,7 @@ def send_price_alert(tracked_product):
             'user': tracked_product.user,
             'product': tracked_product,
             'price_difference': tracked_product.price_difference(),
-            'percentage_drop': round(tracked_product.price_difference_percentage(), 2)
+            'percentage_drop': abs(round(tracked_product.price_difference_percentage(), 2))
         })
         
         # Plain text alternative
