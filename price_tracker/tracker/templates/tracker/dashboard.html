@@ -1,0 +1,213 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .price-change-up {
+        color: #dc3545;
+    }
+    .price-change-down {
+        color: #28a745;
+    }
+    .target-reached {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-tachometer-alt me-2"></i>Your Dashboard</h1>
+        <p class="lead">Track and manage your product price alerts</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <a href="{% url 'home' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Track New Product
+        </a>
+    </div>
+</div>
+
+{% if page_obj %}
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-list me-2"></i>Your Tracked Products</h4>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Current Price</th>
+                        <th>Target Price</th>
+                        <th>Price Change</th>
+                        <th>Last Updated</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in page_obj %}
+                    <tr {% if product.target_reached %}class="target-reached"{% endif %}>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if product.product_image %}
+                                <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                {% else %}
+                                <div class="product-placeholder me-2" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shopping-bag text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">{{ product.product_name|truncatechars:40 }}</a>
+                                    {% if product.target_reached %}
+                                    <span class="badge bg-success ms-2">Target Reached!</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>${{ product.current_price|floatformat:2 }}</td>
+                        <td>${{ product.target_price|floatformat:2 }}</td>
+                        <td>
+                            {% if product.price_difference > 0 %}
+                            <span class="price-change-down">
+                                <i class="fas fa-arrow-down me-1"></i>${{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                            </span>
+                            {% elif product.price_difference < 0 %}
+                            <span class="price-change-up">
+                                <i class="fas fa-arrow-up me-1"></i>${{ product.price_difference|abs|floatformat:2 }} ({{ product.price_difference_percentage|abs|floatformat:1 }}%)
+                            </span>
+                            {% else %}
+                            <span class="text-muted">No change</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ product.last_checked|date:"M d, Y H:i" }}</td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{% url 'check-price' product.id %}" class="btn btn-sm btn-info" title="Update Price">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
+                                <a href="{% url 'product-details' product.id %}" class="btn btn-sm btn-primary" title="View Details">
+                                    <i class="fas fa-chart-line"></i>
+                                </a>
+                                <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('Are you sure you want to remove this product?')" title="Stop Tracking">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="card shadow text-center">
+        <div class="card-body py-5">
+            <i class="fas fa-search fa-4x mb-3 text-muted"></i>
+            <h3>No products tracked yet</h3>
+            <p class="lead">Start tracking product prices by adding a product URL on the home page.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-plus-circle me-2"></i>Track Your First Product
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Update prices</strong> by clicking the refresh button in the Actions column
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>View price history</strong> by clicking the chart button
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Get email alerts</strong> when prices drop below your target price
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong>Track multiple products</strong> from different online stores
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h4>
+            </div>
+            <div class="card-body">
+                <p>Our system regularly checks the current prices of your tracked products. When a price drops below your target price, we'll send you an email notification.</p>
+                
+                <h5 class="mt-3">Supported Stores:</h5>
+                <div class="d-flex flex-wrap">
+                    <div class="me-4 mb-2">
+                        <i class="fab fa-amazon fa-2x me-2 text-dark"></i>
+                        <span>Amazon</span>
+                    </div>
+                    <div class="me-4 mb-2">
+                        <i class="fas fa-shopping-cart fa-2x me-2 text-primary"></i>
+                        <span>Flipkart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Top Categories{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1><i class="fas fa-tags me-2"></i>Top Categories</h1>
+        <p class="lead">Discover popular product categories with the best deals</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ category.name }}</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle mb-3 text-muted">Popular Items</h5>
+                <ul class="list-group list-group-flush">
+                    {% for item in category.popular_items %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        {{ item }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer bg-light">
+                <a href="#" class="btn btn-outline-primary d-block">
+                    <i class="fas fa-arrow-right me-2"></i>Browse {{ category.name }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card mt-4 shadow">
+    <div class="card-header bg-info text-white">
+        <h4 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips for Finding the Best Deals</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5>Track Seasonal Sales</h5>
+                        <p class="text-muted">Major online retailers offer significant discounts during holidays and special events like Black Friday, Prime Day, and End of Season sales.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-mobile-alt fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5>Install Shopping Apps</h5>
+                        <p class="text-muted">Many retailers offer app-only deals and flash sales that might not be available on their websites.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-tag fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5>Look for Coupon Codes</h5>
+                        <p class="text-muted">Check coupon websites or sign up for newsletters to get exclusive discount codes.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chart-line fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5>Use Price Tracking Tools</h5>
+                        <p class="text-muted">Track prices over time to understand price fluctuations and identify the best time to buy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

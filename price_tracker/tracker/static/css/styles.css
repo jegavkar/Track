@@ -1,0 +1,100 @@
+/* Custom Styles for Price Tracker */
+
+/* General Styling */
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Message container for Django messages */
+.message-container {
+    position: fixed;
+    top: 70px;
+    right: 15px;
+    z-index: 1000;
+    width: 300px;
+}
+
+/* Dashboard styling */
+.price-change-up {
+    color: #dc3545;
+}
+
+.price-change-down {
+    color: #28a745;
+}
+
+.target-reached {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* Card styling */
+.card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 0.3rem;
+}
+
+/* Step numbers on home page */
+.step-number {
+    width: 30px;
+    height: 30px;
+    font-weight: bold;
+}
+
+/* Features list on home page */
+.features-list i {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Product placeholder */
+.product-placeholder {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: #007bff;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    border-top: 1px solid #e9ecef;
+}

@@ -1,0 +1,99 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Create an Account
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" name="{{ form.username.name }}" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                   placeholder="Choose a username">
+                        </div>
+                        {% if form.username.errors %}
+                        <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="{{ form.email.name }}" 
+                                   id="{{ form.email.id_for_label }}" 
+                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                   placeholder="Enter your email address">
+                        </div>
+                        {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted">Required. We'll send price drop alerts to this email.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="{{ form.password1.name }}" 
+                                   id="{{ form.password1.id_for_label }}" 
+                                   class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                   placeholder="Choose a password">
+                        </div>
+                        {% if form.password1.errors %}
+                        <div class="invalid-feedback d-block">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted">
+                            <ul class="mb-0">
+                                <li>Your password can't be too similar to your other personal information.</li>
+                                <li>Your password must contain at least 8 characters.</li>
+                                <li>Your password can't be a commonly used password.</li>
+                                <li>Your password can't be entirely numeric.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="{{ form.password2.name }}" 
+                                   id="{{ form.password2.id_for_label }}" 
+                                   class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                   placeholder="Enter the same password again">
+                        </div>
+                        {% if form.password2.errors %}
+                        <div class="invalid-feedback d-block">{{ form.password2.errors }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted">Enter the same password as before, for verification.</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

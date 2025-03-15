@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Drop Alert!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .price-info {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #dc3545;
+            margin-right: 10px;
+        }
+        .action-button {
+            display: block;
+            background-color: #28a745;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin: 20px auto;
+            width: 200px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Price Drop Alert!</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{ user.username }},</p>
+            
+            <p>Good news! The price of <strong>{{ product.product_name }}</strong> has dropped below your target price!</p>
+            
+            <div class="price-info">
+                <p><span class="original-price">${{ product.original_price|floatformat:2 }}</span> <span class="price">${{ product.current_price|floatformat:2 }}</span></p>
+                <p>You're saving <strong>${{ price_difference|floatformat:2 }}</strong> ({{ percentage_drop }}% off)</p>
+                <p>Your target price: ${{ product.target_price|floatformat:2 }}</p>
+            </div>
+            
+            <p>Don't miss this opportunity to purchase it at a great price!</p>
+            
+            <a href="{{ product.product_url }}" class="action-button">View Product</a>
+        </div>
+        <div class="footer">
+            <p>This email was sent by Price Tracker. You received this because you set up a price alert for this product.</p>
+            <p>© {% now "Y" %} Price Tracker. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
