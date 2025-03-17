@@ -1,4 +1,4 @@
-# Price Tracker
+# TrackMyDeal
 
 A Django-based web application that allows users to track product prices from various online stores (Amazon, Flipkart, Best Buy, and more) and receive notifications when prices drop below their target.
 

@@ -2,7 +2,7 @@ Here is a **detailed prompt** you can copy and paste into any **AI code generato
 
 ---
 
-### **📌 Prompt: Django Price Tracker Website**  
+### **📌 Prompt: Django TrackMyDeal Website**  
 
 #### **🎯 Project Overview:**  
 I want to build a **Django-based price tracking website** where users can:  

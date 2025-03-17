@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tracker.apps.TrackerConfig',  # Our price tracker app
+    'tracker.apps.TrackerConfig',  # Our TrackMyDeal app
 ]
 
 MIDDLEWARE = [
