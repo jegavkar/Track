@@ -57,18 +57,18 @@
                 <div class="row g-0 text-center mb-3">
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Current Price</div>
-                        <div class="price-badge">${{ product.current_price|floatformat:2 }}</div>
+                        <div class="price-badge">₹{{ product.current_price|floatformat:2 }}</div>
                     </div>
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Target Price</div>
-                        <div class="price-badge">${{ product.target_price|floatformat:2 }}</div>
+                        <div class="price-badge">₹{{ product.target_price|floatformat:2 }}</div>
                     </div>
                 </div>
                 
                 <div class="row g-0 text-center mb-3">
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Original Price</div>
-                        <div class="price-badge">${{ product.original_price|floatformat:2 }}</div>
+                        <div class="price-badge">₹{{ product.original_price|floatformat:2 }}</div>
                     </div>
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Price Change</div>
@@ -137,17 +137,17 @@
                                 {% for history in price_history %}
                                 <tr>
                                     <td>{{ history.date_checked|date:"M d, Y H:i" }}</td>
-                                    <td>${{ history.price|floatformat:2 }}</td>
+                                    <td>₹{{ history.price|floatformat:2 }}</td>
                                     <td>
                                         {% if forloop.counter < price_history.count %}
                                             {% with prev_price=price_history|slice:forloop.counter|first %}
                                                 {% if history.price < prev_price.price %}
                                                 <span class="price-change-down">
-                                                    <i class="fas fa-arrow-down me-1"></i>${{ prev_price.price|sub:history.price|floatformat:2 }}
+                                                    <i class="fas fa-arrow-down me-1"></i>₹{{ prev_price.price|sub:history.price|floatformat:2 }}
                                                 </span>
                                                 {% elif history.price > prev_price.price %}
                                                 <span class="price-change-up">
-                                                    <i class="fas fa-arrow-up me-1"></i>${{ history.price|sub:prev_price.price|floatformat:2 }}
+                                                    <i class="fas fa-arrow-up me-1"></i>₹{{ history.price|sub:prev_price.price|floatformat:2 }}
                                                 </span>
                                                 {% else %}
                                                 <span class="text-muted">No change</span>
@@ -201,7 +201,7 @@
             data: {
                 labels: dates.reverse(),
                 datasets: [{
-                    label: 'Price ($)',
+                    label: 'Price (₹)',
                     data: prices.reverse(),
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.1,
@@ -215,7 +215,7 @@
                         beginAtZero: false,
                         ticks: {
                             callback: function(value) {
-                                return '$' + value.toFixed(2);
+                                return '₹' + value.toFixed(2);
                             }
                         }
                     }
@@ -224,7 +224,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return '$' + context.parsed.y.toFixed(2);
+                                return '₹' + context.parsed.y.toFixed(2);
                             }
                         }
                     }

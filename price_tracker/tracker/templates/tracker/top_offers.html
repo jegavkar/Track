@@ -20,8 +20,8 @@
             </div>
             <div class="card-body">
                 <div class="text-center mb-3">
-                    <span class="text-muted text-decoration-line-through me-2">${{ offer.original_price|floatformat:2 }}</span>
-                    <span class="text-danger fw-bold fs-4">${{ offer.current_price|floatformat:2 }}</span>
+                    <span class="text-muted text-decoration-line-through me-2">₹{{ offer.original_price|floatformat:2 }}</span>
+                    <span class="text-danger fw-bold fs-4">₹{{ offer.current_price|floatformat:2 }}</span>
                 </div>
                 <div class="d-grid">
                     <a href="#" class="btn btn-outline-danger">

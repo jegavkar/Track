@@ -114,11 +114,36 @@ def top_offers(request):
     # In a real-world scenario, this would be dynamic data from a database or API
     # For this example, we'll use static offers
     offers = [
-        {'name': 'Amazon Echo Dot', 'discount': '40%', 'original_price': 49.99, 'current_price': 29.99},
-        {'name': 'Samsung Galaxy S23', 'discount': '25%', 'original_price': 999.99, 'current_price': 749.99},
-        {'name': 'Apple AirPods Pro', 'discount': '20%', 'original_price': 249.99, 'current_price': 199.99},
-        {'name': 'Sony WH-1000XM4', 'discount': '30%', 'original_price': 349.99, 'current_price': 244.99},
-        {'name': 'Nintendo Switch', 'discount': '15%', 'original_price': 299.99, 'current_price': 254.99}
-    ]
+    {
+        "name": "Amazon Echo Dot",
+        "discount": "40%",
+        "original_price": 4159.17,
+        "current_price": 2495.17
+    },
+    {
+        "name": "Samsung Galaxy S23",
+        "discount": "25%",
+        "original_price": 82999.17,
+        "current_price": 62249.17
+    },
+    {
+        "name": "Apple AirPods Pro",
+        "discount": "20%",
+        "original_price": 20749.17,
+        "current_price": 16599.17
+    },
+    {
+        "name": "Sony WH-1000XM4",
+        "discount": "30%",
+        "original_price": 29049.17,
+        "current_price": 20334.17
+    },
+    {
+        "name": "Nintendo Switch",
+        "discount": "15%",
+        "original_price": 24899.17,
+        "current_price": 21164.17
+    }
+]
     
     return render(request, 'tracker/top_offers.html', {'offers': offers})

@@ -72,9 +72,9 @@
             <p>Good news! The price of <strong>{{ product.product_name }}</strong> has dropped below your target price!</p>
             
             <div class="price-info">
-                <p><span class="original-price">${{ product.original_price|floatformat:2 }}</span> <span class="price">${{ product.current_price|floatformat:2 }}</span></p>
-                <p>You're saving <strong>${{ price_difference|floatformat:2 }}</strong> ({{ percentage_drop }}% off)</p>
-                <p>Your target price: ${{ product.target_price|floatformat:2 }}</p>
+                <p><span class="original-price">₹{{ product.original_price|floatformat:2 }}</span> <span class="price">₹{{ product.current_price|floatformat:2 }}</span></p>
+                <p>You're saving <strong>₹{{ price_difference|floatformat:2 }}</strong> ({{ percentage_drop }}% off)</p>
+                <p>Your target price: ₹{{ product.target_price|floatformat:2 }}</p>
             </div>
             
             <p>Don't miss this opportunity to purchase it at a great price!</p>

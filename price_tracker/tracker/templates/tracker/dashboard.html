@@ -66,16 +66,16 @@
                                 </div>
                             </div>
                         </td>
-                        <td>${{ product.current_price|floatformat:2 }}</td>
-                        <td>${{ product.target_price|floatformat:2 }}</td>
+                        <td>₹{{ product.current_price|floatformat:2 }}</td>
+                        <td>₹{{ product.target_price|floatformat:2 }}</td>
                         <td>
                             {% if product.price_difference > 0 %}
                             <span class="price-change-down">
-                                <i class="fas fa-arrow-down me-1"></i>${{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                <i class="fas fa-arrow-down me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
                             </span>
                             {% elif product.price_difference < 0 %}
                             <span class="price-change-up">
-                                <i class="fas fa-arrow-up me-1"></i>${{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                <i class="fas fa-arrow-up me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
                             </span>
                             {% else %}
                             <span class="text-muted">No change</span>

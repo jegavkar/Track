@@ -23,7 +23,7 @@ class TrackedProductForm(forms.ModelForm):
         fields = ('product_url', 'target_price')
         widgets = {
             'product_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://www.amazon.com/product-url'}),
-            'target_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '99.99'}),
+            'target_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '999'}),
         }
         
     def clean_target_price(self):

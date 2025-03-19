@@ -106,12 +106,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # For development, use the console backend which outputs emails to the console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # For production, use SMTP settings
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'trackmyoffer@gmail.com'
+EMAIL_HOST_PASSWORD = 'xhrt eltr dlok gire'
 
 # Login/Logout redirects
 LOGIN_REDIRECT_URL = 'dashboard'
