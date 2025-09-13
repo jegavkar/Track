@@ -67,20 +67,34 @@ def scrape_amazon(soup, url):
         
         # Try different price selectors (Amazon changes these frequently)
         price = None
-        price_selectors = [
-            '.a-price .a-offscreen',
-            '#priceblock_ourprice',
-            '#priceblock_dealprice',
-            '.a-price-whole',
-            '.a-price .a-price-whole'
-        ]
-        
-        for selector in price_selectors:
-            price_element = soup.select_one(selector)
-            if price_element:
-                price = clean_price(price_element.get_text())
-                if price:
-                    break
+
+        # First, try the combined price in a-offscreen
+        price_element = soup.select_one('.a-price .a-offscreen')
+        if price_element:
+            price = clean_price(price_element.get_text())
+        else:
+            # Try combining whole and fraction parts
+            price_whole = soup.select_one('span.a-price-whole')
+            price_fraction = soup.select_one('span.a-price-fraction')
+            if price_whole:
+                price_str = price_whole.get_text().strip()
+                if price_fraction:
+                    price_str += '.' + price_fraction.get_text().strip()
+                price = clean_price(price_str)
+
+        # Fallback to other selectors
+        if not price:
+            price_selectors = [
+                '#priceblock_ourprice',
+                '#priceblock_dealprice',
+                '.a-price-whole'
+            ]
+            for selector in price_selectors:
+                price_element = soup.select_one(selector)
+                if price_element:
+                    price = clean_price(price_element.get_text())
+                    if price:
+                        break
         
         # Try to get product image
         img_element = soup.select_one('#landingImage') or soup.select_one('#imgBlkFront')
@@ -176,3 +190,91 @@ def scrape_generic(url):
     except Exception as e:
         logger.error(f"Error parsing website with generic method: {e}")
         return "Unknown Product", None, None
+
+def search_amazon_category(category):
+    """
+    Search Amazon for products in the given category using requests and BeautifulSoup and return a list of product details.
+
+    Args:
+        category (str): The product category to search for.
+
+    Returns:
+        list of dict: Each dict contains 'name', 'price', 'image', and 'url' keys.
+    """
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    search_url = f"https://www.amazon.com/s?k={category.replace(' ', '+')}"
+    logger.info(f"Searching Amazon for category: {category}, URL: {search_url}")
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+    }
+
+    try:
+        response = requests.get(search_url, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        results = []
+
+        # Find all search result items
+        search_results = soup.select('div.s-main-slot div.s-result-item')
+        logger.info(f"Found {len(search_results)} search result items")
+
+        for item in search_results[:10]:  # Limit to top 10 results
+            try:
+                # Extract product name
+                name_elem = item.select_one('h2 a span')
+                name = name_elem.get_text().strip() if name_elem else "Unknown Product"
+
+                # Extract product URL
+                url_elem = item.select_one('h2 a')
+                url = url_elem.get('href') if url_elem else None
+                if url and not url.startswith('http'):
+                    url = f"https://www.amazon.com{url}"
+
+                # Extract price
+                price = None
+                try:
+                    price_whole = item.select_one('span.a-price-whole')
+                    price_fraction = item.select_one('span.a-price-fraction')
+                    if price_whole:
+                        price_str = price_whole.get_text().strip()
+                        if price_fraction:
+                            price_str += '.' + price_fraction.get_text().strip()
+                        price = float(price_str.replace(',', ''))
+                except:
+                    pass  # Price not found or parsing error
+
+                # Extract image URL
+                img_url = None
+                try:
+                    img_elem = item.select_one('img.s-image')
+                    img_url = img_elem.get('src') if img_elem else None
+                except:
+                    pass  # Image not found
+
+                results.append({
+                    'name': name,
+                    'price': price,
+                    'image': img_url,
+                    'url': url
+                })
+
+            except Exception as e:
+                logger.warning(f"Error extracting data from search result item: {e}")
+                continue
+
+        logger.info(f"Returning {len(results)} products for category {category}")
+        return results
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching Amazon category search results with requests: {e}")
+        return []
+    except Exception as e:
+        logger.error(f"Error parsing Amazon category search results: {e}")
+        return []

@@ -2,8 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+class ProductCategory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} (by {self.user.username})"
+
+    class Meta:
+        unique_together = ('user', 'name')
+
 class TrackedProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, blank=True)
     product_name = models.CharField(max_length=255, blank=True)
     product_url = models.URLField()
     product_image = models.URLField(blank=True, null=True)
@@ -12,6 +25,7 @@ class TrackedProduct(models.Model):
     original_price = models.FloatField(null=True, blank=True)
     last_checked = models.DateTimeField(auto_now=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
     notification_sent = models.BooleanField(default=False)
     
     def __str__(self):

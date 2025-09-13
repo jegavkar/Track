@@ -5,8 +5,31 @@ from django.conf import settings
 from .models import TrackedProduct, PriceHistory
 from .scraper import get_product_price
 import logging
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
+
+# Fixed exchange rates for simplicity
+EXCHANGE_RATES = {
+    'amazon.com': 83.0,  # USD to INR
+    'amazon.in': 1.0,    # INR to INR
+    'flipkart.com': 1.0, # INR assumed
+    'bestbuy.com': 83.0, # USD to INR
+    # Add more domains and rates as needed
+}
+
+def convert_to_inr(price, url):
+    """
+    Convert the given price to INR based on the domain of the URL.
+    If domain not found, assume price is already in INR.
+    """
+    domain = urlparse(url).netloc.lower()
+    for key in EXCHANGE_RATES:
+        if key in domain:
+            rate = EXCHANGE_RATES[key]
+            return price * rate
+    # Default: no conversion
+    return price
 
 def update_product_price(tracked_product):
     """
@@ -26,9 +49,12 @@ def update_product_price(tracked_product):
             logger.warning(f"Could not retrieve price for {tracked_product.product_url}")
             return False
             
+        # Convert price to INR
+        current_price_inr = convert_to_inr(current_price, tracked_product.product_url)
+            
         # If this is the first price update, set the original price
         if tracked_product.original_price is None:
-            tracked_product.original_price = current_price
+            tracked_product.original_price = current_price_inr
             
         # Set product name if it doesn't exist yet
         if not tracked_product.product_name:
@@ -39,17 +65,17 @@ def update_product_price(tracked_product):
             tracked_product.product_image = product_image
             
         # Check if price has changed
-        price_changed = tracked_product.current_price != current_price
+        price_changed = tracked_product.current_price != current_price_inr
         
         # Update the current price
-        tracked_product.current_price = current_price
+        tracked_product.current_price = current_price_inr
         tracked_product.save()
         
         # If price changed, add to price history
         if price_changed:
             PriceHistory.objects.create(
                 product=tracked_product,
-                price=current_price
+                price=current_price_inr
             )
             
         # Check if target price reached and notification not sent yet

@@ -1,0 +1,363 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Product History{% endblock %}
+
+{% block extra_css %}
+<style>
+    .price-change-up {
+        color: #dc3545;
+    }
+    .price-change-down {
+        color: #28a745;
+    }
+    .target-reached {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    .inactive-product {
+        opacity: 0.7;
+    }
+    .section-header {
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-history me-2"></i>Product Tracking History</h1>
+        <p class="lead">View all your tracked products - currently active and previously tracked</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary me-2">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-secondary">
+            <i class="fas fa-plus-circle me-2"></i>Track New Product
+        </a>
+    </div>
+</div>
+
+<!-- Currently Tracking Section -->
+<div class="mb-5">
+    <h2 class="section-header">
+        <i class="fas fa-play-circle text-success me-2"></i>Currently Tracking
+    </h2>
+
+    {% if active_categories or active_uncategorized %}
+        {% for category_data in active_categories %}
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-folder me-2"></i>{{ category_data.category.name }}
+                    <small class="text-light ms-3">Created on {{ category_data.category.date_created|date:"M d, Y" }}</small>
+                </h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Current Price</th>
+                            <th>Target Price</th>
+                            <th>Price Change</th>
+                            <th>Last Updated</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in category_data.products %}
+                        <tr {% if product.target_reached %}class="target-reached"{% endif %}>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if product.product_image %}
+                                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                    {% else %}
+                                    <div class="product-placeholder me-2" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-shopping-bag text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">{{ product.product_name|truncatechars:40 }}</a>
+                                        {% if product.target_reached %}
+                                        <span class="badge bg-success ms-2">Target Reached!</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>₹{{ product.current_price|floatformat:2 }}</td>
+                            <td>₹{{ product.target_price|floatformat:2 }}</td>
+                            <td>
+                                {% if product.price_difference > 0 %}
+                                <span class="price-change-down">
+                                    <i class="fas fa-arrow-down me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                </span>
+                                {% elif product.price_difference < 0 %}
+                                <span class="price-change-up">
+                                    <i class="fas fa-arrow-up me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                </span>
+                                {% else %}
+                                <span class="text-muted">No change</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ product.last_checked|date:"M d, Y h:i A" }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'check-price' product.id %}" class="btn btn-sm btn-info" title="Update Price">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </a>
+                                    <a href="{% url 'product-details' product.id %}" class="btn btn-sm btn-primary" title="View Details">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                    <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to remove this product?')" title="Stop Tracking">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+
+                        {% if active_uncategorized %}
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-folder-open me-2"></i>Uncategorized Products
+                                </h4>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Current Price</th>
+                                            <th>Target Price</th>
+                                            <th>Price Change</th>
+                                            <th>Last Updated</th>
+                                            <th class="text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in active_uncategorized %}
+                                        <tr {% if product.target_reached %}class="target-reached"{% endif %}>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if product.product_image %}
+                                                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                                    {% else %}
+                                                    <div class="product-placeholder me-2" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-shopping-bag text-muted"></i>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">{{ product.product_name|truncatechars:40 }}</a>
+                                                        {% if product.target_reached %}
+                                                        <span class="badge bg-success ms-2">Target Reached!</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>₹{{ product.current_price|floatformat:2 }}</td>
+                                            <td>₹{{ product.target_price|floatformat:2 }}</td>
+                                            <td>
+                                                {% if product.price_difference > 0 %}
+                                                <span class="price-change-down">
+                                                    <i class="fas fa-arrow-down me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                                </span>
+                                                {% elif product.price_difference < 0 %}
+                                                <span class="price-change-up">
+                                                    <i class="fas fa-arrow-up me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                                </span>
+                                                {% else %}
+                                                <span class="text-muted">No change</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ product.last_checked|date:"M d, Y h:i A" }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'check-price' product.id %}" class="btn btn-sm btn-info" title="Update Price">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </a>
+                                    <a href="{% url 'product-details' product.id %}" class="btn btn-sm btn-primary" title="View Details">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                    <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to remove this product?')" title="Stop Tracking">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="card shadow text-center">
+            <div class="card-body py-5">
+                <i class="fas fa-search fa-4x mb-3 text-muted"></i>
+                <h3>No products currently being tracked</h3>
+                <p class="lead">Start tracking product prices by adding a product URL on the home page.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg mt-3">
+                    <i class="fas fa-plus-circle me-2"></i>Track Your First Product
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Previously Tracked Section -->
+<div class="mb-5">
+    <h2 class="section-header">
+        <i class="fas fa-stop-circle text-secondary me-2"></i>Previously Tracked Products
+    </h2>
+
+    {% if inactive_categories or inactive_uncategorized %}
+                        {% for category_data in inactive_categories %}
+                        <div class="card shadow mb-4 inactive-product">
+                            <div class="card-header bg-dark text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-folder me-2"></i>{{ category_data.category.name }}
+                                    <small class="text-light ms-3">Created on {{ category_data.category.date_created|date:"M d, Y" }}</small>
+                                </h4>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Last Price</th>
+                                            <th>Target Price</th>
+                                            <th>Final Price Change</th>
+                                            <th>Last Updated</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in category_data.products %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if product.product_image %}
+                                                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                                    {% else %}
+                                                    <div class="product-placeholder me-2" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-shopping-bag text-muted"></i>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">{{ product.product_name|truncatechars:40 }}</a>
+                                                        <span class="badge bg-secondary ms-2">Untracked</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>₹{{ product.current_price|floatformat:2 }}</td>
+                                            <td>₹{{ product.target_price|floatformat:2 }}</td>
+                                            <td>
+                                                {% if product.price_difference > 0 %}
+                                                <span class="price-change-down">
+                                                    <i class="fas fa-arrow-down me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                                </span>
+                                                {% elif product.price_difference < 0 %}
+                                                <span class="price-change-up">
+                                                    <i class="fas fa-arrow-up me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                                </span>
+                                                {% else %}
+                                                <span class="text-muted">No change</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ product.last_checked|date:"M d, Y h:i A" }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">No longer tracking</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if inactive_uncategorized %}
+        <div class="card shadow mb-4 inactive-product">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-folder-open me-2"></i>Uncategorized Products
+                </h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Last Price</th>
+                            <th>Target Price</th>
+                            <th>Final Price Change</th>
+                            <th>Last Updated</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in inactive_uncategorized %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if product.product_image %}
+                                    <img src="{{ product.product_image }}" alt="{{ product.product_name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                    {% else %}
+                                    <div class="product-placeholder me-2" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-shopping-bag text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ product.product_url }}" target="_blank" class="text-decoration-none">{{ product.product_name|truncatechars:40 }}</a>
+                                        <span class="badge bg-secondary ms-2">Untracked</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>₹{{ product.current_price|floatformat:2 }}</td>
+                            <td>₹{{ product.target_price|floatformat:2 }}</td>
+                            <td>
+                                {% if product.price_difference > 0 %}
+                                <span class="price-change-down">
+                                    <i class="fas fa-arrow-down me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                </span>
+                                {% elif product.price_difference < 0 %}
+                                <span class="price-change-up">
+                                    <i class="fas fa-arrow-up me-1"></i>₹{{ product.price_difference|floatformat:2 }} ({{ product.price_difference_percentage|floatformat:1 }}%)
+                                </span>
+                                {% else %}
+                                <span class="text-muted">No change</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ product.last_checked|date:"M d, Y h:i A" }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">No longer tracking</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="card shadow text-center">
+            <div class="card-body py-5">
+                <i class="fas fa-history fa-4x mb-3 text-muted"></i>
+                <h3>No previously tracked products</h3>
+                <p class="lead">Products you stop tracking will appear here.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

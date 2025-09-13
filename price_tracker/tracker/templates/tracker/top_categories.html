@@ -29,13 +29,21 @@
                 </ul>
             </div>
             <div class="card-footer bg-light">
-                <a href="#" class="btn btn-outline-primary d-block">
+                <button class="btn btn-outline-primary d-block browse-btn" data-category="{{ category.name }}">
                     <i class="fas fa-arrow-right me-2"></i>Browse {{ category.name }}
-                </a>
+                </button>
             </div>
         </div>
     </div>
     {% endfor %}
+</div>
+
+<!-- Section to display browse results -->
+<div id="browse-results" class="mt-5" style="display: none;">
+    <h2 id="results-title" class="mb-4"></h2>
+    <div id="results-container" class="row">
+        <!-- Results will be populated here via JavaScript -->
+    </div>
 </div>
 
 <div class="card mt-4 shadow">
@@ -94,4 +102,77 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const browseButtons = document.querySelectorAll('.browse-btn');
+    const resultsSection = document.getElementById('browse-results');
+    const resultsTitle = document.getElementById('results-title');
+    const resultsContainer = document.getElementById('results-container');
+
+    browseButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            resultsTitle.textContent = `Browsing Amazon for ${category}`;
+            resultsContainer.innerHTML = '<p>Loading...</p>';
+            resultsSection.style.display = 'block';
+
+            fetch(`/browse-category/${encodeURIComponent(category)}/`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    if (data.products && data.products.length > 0) {
+                        data.products.forEach(product => {
+                            const col = document.createElement('div');
+                            col.className = 'col-md-4 mb-4';
+
+                            const card = document.createElement('div');
+                            card.className = 'card h-100 shadow';
+
+                            const img = document.createElement('img');
+                            img.className = 'card-img-top';
+                            img.src = product.image || 'https://via.placeholder.com/150';
+                            img.alt = product.name;
+
+                            const cardBody = document.createElement('div');
+                            cardBody.className = 'card-body';
+
+                            const title = document.createElement('h5');
+                            title.className = 'card-title';
+                            title.textContent = product.name;
+
+                            const price = document.createElement('p');
+                            price.className = 'card-text text-success';
+                            price.textContent = product.price ? `$${product.price.toFixed(2)}` : 'Price not available';
+
+                            const link = document.createElement('a');
+                            link.href = product.url;
+                            link.target = '_blank';
+                            link.className = 'btn btn-primary';
+                            link.textContent = 'View on Amazon';
+
+                            cardBody.appendChild(title);
+                            cardBody.appendChild(price);
+                            cardBody.appendChild(link);
+
+                            card.appendChild(img);
+                            card.appendChild(cardBody);
+
+                            col.appendChild(card);
+                            resultsContainer.appendChild(col);
+                        });
+                    } else {
+                        resultsContainer.innerHTML = '<p>No products found for this category.</p>';
+                    }
+                })
+                .catch(error => {
+                    resultsContainer.innerHTML = '<p>Error loading products. Please try again later.</p>';
+                    console.error('Error fetching browse data:', error);
+                });
+        });
+    });
+});
+</script>
 {% endblock %}
