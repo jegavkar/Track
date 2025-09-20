@@ -197,34 +197,39 @@ def top_offers(request):
         "name": "Amazon Echo Dot",
         "discount": "40%",
         "original_price": 4159.17,
-        "current_price": 2495.17
+        "current_price": 2495.17,
+        "savings": 4159.17 - 2495.17
     },
     {
         "name": "Samsung Galaxy S23",
         "discount": "25%",
         "original_price": 82999.17,
-        "current_price": 62249.17
+        "current_price": 62249.17,
+        "savings": 82999.17 - 62249.17
     },
     {
         "name": "Apple AirPods Pro",
         "discount": "20%",
         "original_price": 20749.17,
-        "current_price": 16599.17
+        "current_price": 16599.17,
+        "savings": 20749.17 - 16599.17
     },
     {
         "name": "Sony WH-1000XM4",
         "discount": "30%",
         "original_price": 29049.17,
-        "current_price": 20334.17
+        "current_price": 20334.17,
+        "savings": 29049.17 - 20334.17
     },
     {
         "name": "Nintendo Switch",
         "discount": "15%",
         "original_price": 24899.17,
-        "current_price": 21164.17
+        "current_price": 21164.17,
+        "savings": 24899.17 - 21164.17
     }
 ]
-    
+
     return render(request, 'tracker/top_offers.html', {'offers': offers})
 
 import logging

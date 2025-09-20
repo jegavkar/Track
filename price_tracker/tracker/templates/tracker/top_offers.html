@@ -5,26 +5,24 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1><i class="fas fa-percent me-2"></i>Top Offers</h1>
-        <p class="lead">Discover the best current deals from popular online stores</p>
+        <h1><i class="fas fa-percent me-2 text-primary"></i>Top Offers</h1>
+        <p class="lead text-muted">Discover the best current deals from popular online stores</p>
     </div>
 </div>
 
 <div class="row">
     {% for offer in offers %}
     <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+        <div class="card shadow h-100 border-0 offer-card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">{{ offer.name }}</h5>
-                <span class="badge bg-light text-danger">-{{ offer.discount }}</span>
+                <span class="badge rounded-pill bg-warning text-dark">-{{ offer.discount }}</span>
             </div>
-            <div class="card-body">
-                <div class="text-center mb-3">
-                    <span class="text-muted text-decoration-line-through me-2">₹{{ offer.original_price|floatformat:2 }}</span>
-                    <span class="text-danger fw-bold fs-4">₹{{ offer.current_price|floatformat:2 }}</span>
-                </div>
-                <div class="d-grid">
-                    <a href="#" class="btn btn-outline-danger">
+            <div class="card-body text-center">
+                <span class="text-muted text-decoration-line-through me-2">₹{{ offer.original_price|floatformat:2 }}</span>
+                <span class="text-success fw-bold fs-4">₹{{ offer.current_price|floatformat:2 }}</span>
+                <div class="d-grid mt-3">
+                    <a href="#" class="btn btn-primary">
                         <i class="fas fa-external-link-alt me-2"></i>View Deal
                     </a>
                 </div>
@@ -40,52 +38,54 @@
     {% endfor %}
 </div>
 
-<div class="card mt-4 shadow">
-    <div class="card-header bg-danger text-white">
-        <h4 class="mb-0"><i class="fas fa-fire me-2"></i>Hot Deal Categories</h4>
+<!-- Hot Deal Categories -->
+<div class="card mt-4 shadow border-0">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0"><i class="fas fa-fire me-2 text-warning"></i>Hot Deal Categories</h4>
     </div>
     <div class="card-body">
         <div class="row text-center">
             <div class="col-md-3 col-6 mb-4">
-                <div class="p-3 bg-light rounded">
+                <div class="p-3 bg-light rounded hover-card">
                     <i class="fas fa-laptop fa-3x text-primary mb-2"></i>
                     <h5>Electronics</h5>
-                    <p class="text-danger mb-0">Up to 40% Off</p>
+                    <p class="text-success mb-0">Up to 40% Off</p>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="p-3 bg-light rounded">
-                    <i class="fas fa-tshirt fa-3x text-primary mb-2"></i>
+                <div class="p-3 bg-light rounded hover-card">
+                    <i class="fas fa-tshirt fa-3x text-orange-500 mb-2"></i>
                     <h5>Fashion</h5>
-                    <p class="text-danger mb-0">Up to 60% Off</p>
+                    <p class="text-success mb-0">Up to 60% Off</p>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="p-3 bg-light rounded">
-                    <i class="fas fa-home fa-3x text-primary mb-2"></i>
+                <div class="p-3 bg-light rounded hover-card">
+                    <i class="fas fa-home fa-3x text-success mb-2"></i>
                     <h5>Home & Kitchen</h5>
-                    <p class="text-danger mb-0">Up to 35% Off</p>
+                    <p class="text-success mb-0">Up to 35% Off</p>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="p-3 bg-light rounded">
-                    <i class="fas fa-book fa-3x text-primary mb-2"></i>
+                <div class="p-3 bg-light rounded hover-card">
+                    <i class="fas fa-book fa-3x text-indigo mb-2"></i>
                     <h5>Books & Media</h5>
-                    <p class="text-danger mb-0">Up to 25% Off</p>
+                    <p class="text-success mb-0">Up to 25% Off</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card mt-4 shadow">
+<!-- Upcoming Sales -->
+<div class="card mt-4 shadow border-0">
     <div class="card-header bg-primary text-white">
-        <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Upcoming Sale Events</h4>
+        <h4 class="mb-0"><i class="fas fa-calendar-alt me-2 text-warning"></i>Upcoming Sale Events</h4>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
                     <tr>
                         <th>Event</th>
                         <th>Date</th>
@@ -97,25 +97,25 @@
                     <tr>
                         <td><strong>Black Friday</strong></td>
                         <td>November 26</td>
-                        <td>50-80% Off</td>
+                        <td class="text-success">50-80% Off</td>
                         <td>Electronics, Fashion, Home</td>
                     </tr>
                     <tr>
                         <td><strong>Cyber Monday</strong></td>
                         <td>November 29</td>
-                        <td>40-70% Off</td>
+                        <td class="text-success">40-70% Off</td>
                         <td>Electronics, Gadgets, Software</td>
                     </tr>
                     <tr>
                         <td><strong>Christmas Sale</strong></td>
                         <td>December 15-25</td>
-                        <td>30-60% Off</td>
+                        <td class="text-success">30-60% Off</td>
                         <td>Gifts, Home Decor, Fashion</td>
                     </tr>
                     <tr>
                         <td><strong>New Year Sale</strong></td>
-                        <td>December 26-January 5</td>
-                        <td>40-70% Off</td>
+                        <td>December 26-Jan 5</td>
+                        <td class="text-success">40-70% Off</td>
                         <td>All Categories</td>
                     </tr>
                 </tbody>
@@ -123,4 +123,27 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.offer-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 12px;
+}
+.offer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
+}
+.hover-card {
+    transition: all 0.3s ease-in-out;
+}
+.hover-card:hover {
+    transform: scale(1.05);
+    background: #f3f4f6;
+}
+.text-orange-500 { color: #F97316 !important; }
+.text-indigo { color: #4F46E5 !important; }
+</style>
 {% endblock %}
