@@ -5,32 +5,54 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1><i class="fas fa-tags me-2"></i>Top Categories</h1>
-        <p class="lead">Discover popular product categories with the best deals</p>
+        <h1><i class="fas fa-tags me-2 text-primary"></i>Top Categories</h1>
+        <p class="lead text-muted">Discover popular product categories with the best deals</p>
     </div>
 </div>
 
 <div class="row">
     {% for category in categories %}
     <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card shadow h-100">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">{{ category.name }}</h4>
+        <div class="card shadow-sm border-0 category-card h-100">
+            
+            <!-- Dynamic Header with icon + color -->
+            <div class="card-header d-flex align-items-center fw-bold text-white 
+                {% if category.name == 'Electronics' %} bg-primary
+                {% elif category.name == 'Home & Kitchen' %} bg-success
+                {% elif category.name == 'Clothing' %} bg-warning
+                {% elif category.name == 'Books' %} bg-indigo
+                {% elif category.name == 'Beauty & Personal Care' %} bg-pink
+                {% else %} bg-primary {% endif %}">
+                
+                <i class="
+                    {% if category.name == 'Electronics' %} fas fa-mobile-alt
+                    {% elif category.name == 'Home & Kitchen' %} fas fa-utensils
+                    {% elif category.name == 'Clothing' %} fas fa-tshirt
+                    {% elif category.name == 'Books' %} fas fa-book
+                    {% elif category.name == 'Beauty & Personal Care' %} fas fa-magic
+                    {% else %} fas fa-tag {% endif %} me-2"></i>
+                
+                {{ category.name }}
+
+                {% if category.deals %}
+                    <span class="badge bg-warning text-dark ms-auto">{{ category.deals }}</span>
+                {% endif %}
             </div>
+
             <div class="card-body">
-                <h5 class="card-subtitle mb-3 text-muted">Popular Items</h5>
-                <ul class="list-group list-group-flush">
+                <h6 class="fw-bold text-dark">Popular Items</h6>
+                <ul class="list-unstyled mt-2">
                     {% for item in category.popular_items %}
-                    <li class="list-group-item d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        {{ item }}
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i> {{ item }}
                     </li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="card-footer bg-light">
-                <button class="btn btn-outline-primary d-block browse-btn" data-category="{{ category.name }}">
-                    <i class="fas fa-arrow-right me-2"></i>Browse {{ category.name }}
+
+            <div class="card-footer bg-light border-0 text-center">
+                <button class="btn btn-outline-primary w-100 browse-btn" data-category="{{ category.name }}">
+                    <i class="fas fa-arrow-right me-2"></i> Browse {{ category.name }}
                 </button>
             </div>
         </div>
@@ -41,67 +63,35 @@
 <!-- Section to display browse results -->
 <div id="browse-results" class="mt-5" style="display: none;">
     <h2 id="results-title" class="mb-4"></h2>
-    <div id="results-container" class="row">
-        <!-- Results will be populated here via JavaScript -->
-    </div>
+    <div id="results-container" class="row"></div>
 </div>
 
-<div class="card mt-4 shadow">
-    <div class="card-header bg-info text-white">
-        <h4 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips for Finding the Best Deals</h4>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="d-flex align-items-start mb-4">
-                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-calendar-alt fa-2x"></i>
-                    </div>
-                    <div>
-                        <h5>Track Seasonal Sales</h5>
-                        <p class="text-muted">Major online retailers offer significant discounts during holidays and special events like Black Friday, Prime Day, and End of Season sales.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="d-flex align-items-start mb-4">
-                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-mobile-alt fa-2x"></i>
-                    </div>
-                    <div>
-                        <h5>Install Shopping Apps</h5>
-                        <p class="text-muted">Many retailers offer app-only deals and flash sales that might not be available on their websites.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="d-flex align-items-start mb-4">
-                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-tag fa-2x"></i>
-                    </div>
-                    <div>
-                        <h5>Look for Coupon Codes</h5>
-                        <p class="text-muted">Check coupon websites or sign up for newsletters to get exclusive discount codes.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="d-flex align-items-start mb-4">
-                    <div class="bg-info text-white rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-chart-line fa-2x"></i>
-                    </div>
-                    <div>
-                        <h5>Use Price Tracking Tools</h5>
-                        <p class="text-muted">Track prices over time to understand price fluctuations and identify the best time to buy.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 12px;
+}
+.category-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.12);
+}
+.browse-btn {
+    transition: all 0.3s ease;
+}
+.browse-btn:hover {
+    background-color: #2563EB;
+    color: #fff;
+}
+.bg-indigo {
+    background-color: #4F46E5 !important;
+}
+.bg-pink {
+    background-color: #EC4899 !important;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -129,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             col.className = 'col-md-4 mb-4';
 
                             const card = document.createElement('div');
-                            card.className = 'card h-100 shadow';
+                            card.className = 'card h-100 shadow-sm border-0';
 
                             const img = document.createElement('img');
                             img.className = 'card-img-top';
@@ -144,14 +134,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             title.textContent = product.name;
 
                             const price = document.createElement('p');
-                            price.className = 'card-text text-success';
-                            price.textContent = product.price ? `$${product.price.toFixed(2)}` : 'Price not available';
+                            price.className = 'card-text text-success fw-bold';
+                            price.textContent = product.price ? `₹${product.price}` : 'Price not available';
 
                             const link = document.createElement('a');
                             link.href = product.url;
                             link.target = '_blank';
-                            link.className = 'btn btn-primary';
-                            link.textContent = 'View on Amazon';
+                            link.className = 'btn btn-primary w-100';
+                            link.textContent = 'View Deal';
 
                             cardBody.appendChild(title);
                             cardBody.appendChild(price);
