@@ -57,7 +57,7 @@
                 <div class="row g-0 text-center mb-3">
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Current Price</div>
-                        <div class="price-badge">₹{{ product.current_price|floatformat:2 }}</div>
+                        <div class="price-badge">{% if product.current_price %}₹{{ product.current_price|floatformat:2 }}{% else %}Price not available{% endif %}</div>
                     </div>
                     <div class="col-6 border p-3">
                         <div class="fw-bold text-muted">Target Price</div>

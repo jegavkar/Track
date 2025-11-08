@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>₹{{ product.current_price|floatformat:2 }}</td>
+                        <td>{% if product.current_price %}₹{{ product.current_price|floatformat:2 }}{% else %}Price not available{% endif %}</td>
                         <td>₹{{ product.target_price|floatformat:2 }}</td>
                         <td>
                             {% if product.price_difference > 0 %}
@@ -94,7 +94,7 @@
                                 <a href="{% url 'product-details' product.id %}" class="btn btn-sm btn-primary" title="View Details">
                                     <i class="fas fa-chart-line"></i>
                                 </a>
-                                <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger" 
+                                <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger"
                                    onclick="return confirm('Are you sure you want to remove this product?')" title="Stop Tracking">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
@@ -148,7 +148,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>₹{{ product.current_price|floatformat:2 }}</td>
+                        <td>{% if product.current_price %}₹{{ product.current_price|floatformat:2 }}{% else %}Price not available{% endif %}</td>
                         <td>₹{{ product.target_price|floatformat:2 }}</td>
                         <td>
                             {% if product.price_difference > 0 %}
@@ -172,7 +172,7 @@
                                 <a href="{% url 'product-details' product.id %}" class="btn btn-sm btn-primary" title="View Details">
                                     <i class="fas fa-chart-line"></i>
                                 </a>
-                                <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger" 
+                                <a href="{% url 'untrack-product' product.id %}" class="btn btn-sm btn-danger"
                                    onclick="return confirm('Are you sure you want to remove this product?')" title="Stop Tracking">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
